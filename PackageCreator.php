@@ -146,11 +146,15 @@ class PackageCreator {
 	 */
 	protected function writeComposerFile(Package $package, $directory, $plain)
 	{
+
 		$stub = $this->getComposerStub($plain);
 
 		$stub = $this->formatPackageStub($package, $stub);
 
 		$this->files->put($directory.'/composer.json', $stub);
+
+		//hcode readme.md
+		$this->writeReadmeFile($package, $directory, $plain);
 	}
 
 	/**
@@ -177,6 +181,36 @@ class PackageCreator {
 	public function writeIgnoreFile(Package $package, $directory, $plain)
 	{
 		$this->files->copy(__DIR__.'/stubs/gitignore.txt', $directory.'/.gitignore');
+	}
+
+
+
+	/**
+	 * Get the readme.md stub file contents.
+	 *
+	 * @param  bool  $plain
+	 * @return string
+	 */
+	protected function getReadmeStub()
+	{
+
+		return $this->files->get(__DIR__.'/stubs/readme.md');
+	}
+
+
+	/**
+	 * Write the stub readme.md file for the package.
+	 *
+	 * @param  \Illuminate\Workbench\Package  $package
+	 * @param  string  $directory
+	 * @param  bool    $plain
+	 * @return void
+	 */
+	public function writeReadmeFile(Package $package, $directory, $plain)
+	{
+		$stub = $this->getReadmeStub();
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->put($directory.'/readme.md', $stub);
 	}
 
 	/**
