@@ -2,6 +2,7 @@
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Workbench\Console\WorkbenchMakeCommand;
+use Illuminate\Workbench\Console\WorkbenchFullMakeCommand;
 
 class WorkbenchServiceProvider extends ServiceProvider {
 
