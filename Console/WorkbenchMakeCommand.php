@@ -20,7 +20,7 @@ class WorkbenchMakeCommand extends Command {
 	 *
 	 * @var string
 	 */
-	protected $description = 'Create a new package workbench';
+	protected $description = 'Create a new package workbench :)';
 
 	/**
 	 * The package creator instance.
