@@ -57,7 +57,7 @@ class WorkbenchMakeCommand extends Command {
 
 		$this->callComposerUpdate($workbench);
 
-		$this->info('"'.$package->vendor.'\\'.$package->name.'\\'.$package->nameServiceProvider.'"');
+		$this->info('"'.$package->vendor.'\\'.$package->name.'\\'.$package->name.'ServiceProvider"');
 	}
 
 	/**
