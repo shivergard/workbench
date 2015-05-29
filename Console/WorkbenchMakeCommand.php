@@ -49,11 +49,15 @@ class WorkbenchMakeCommand extends Command {
 	 */
 	public function fire()
 	{
-		$workbench = $this->runCreator($this->buildPackage());
+		$package = $this->buildPackage();
+
+		$workbench = $this->runCreator($package);
 
 		$this->info('Package workbench created!');
 
 		$this->callComposerUpdate($workbench);
+
+		$this->info('"'.$package->vendor.'\\'.$package->name.'\\'.$package->nameServiceProvider.'"');
 	}
 
 	/**
