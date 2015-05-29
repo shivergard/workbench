@@ -15,7 +15,6 @@
         "classmap": [
             "src/migrations",
             "src/controllers",
-            "src/console",
             "src/view"
         ],
         "psr-0": {
