@@ -30,6 +30,14 @@ class WorkbenchServiceProvider extends ServiceProvider {
 		});
 
 		$this->commands('command.workbench');
+
+		$this->app->singleton('command.workbench_full', function($app)
+		{
+			return new WorkbenchFullMakeCommand($app['package.creator']);
+		});
+
+		$this->commands('command.workbench_full');
+
 	}
 
 	/**
