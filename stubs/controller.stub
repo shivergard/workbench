@@ -1,0 +1,23 @@
+<?php namespace {{vendor}}\{{name}};
+
+use App\Requests;
+
+use Illuminate\Http\Request;
+
+use \Carbon;
+
+use \Config;
+
+
+class {{name}}Controller extends \App\Http\Controllers\Controller {
+
+	public function test(){
+		return false;
+	}
+
+
+	public function init(){
+		return view('{{lower_name}}::{{lower_name}}');
+	}
+
+}

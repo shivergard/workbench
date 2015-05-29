@@ -18,7 +18,8 @@ class {{name}}ServiceProvider extends ServiceProvider {
 	 */
 	public function boot()
 	{
-		$this->package('{{lower_vendor}}/{{lower_name}}');
+		require __DIR__ .'/routes.php';
+		$this->loadViewsFrom(__DIR__.'/../../views', '{{lower_name}}');
 	}
 
 	/**

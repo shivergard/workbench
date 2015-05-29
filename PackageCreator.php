@@ -33,6 +33,9 @@ class PackageCreator {
 		'PublicDirectory',
 		'TestDirectory',
 		'ServiceProvider',
+		'RoutesFile',
+		'ControllerFile',
+		'ViewFile'
 	);
 
 	/**
@@ -222,6 +225,28 @@ class PackageCreator {
 		$this->files->makeDirectory($path.'/Console', 0777, true);
 		$this->files->put($path.'/Console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
 	}
+
+
+	public function writeRoutesFile(Package $package, $directory, $plain){
+		$stub = $this->files->get(__DIR__.'/stubs/routes.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$path = $this->createClassDirectory($package, $directory);
+		$this->files->put($path.'/'.$this->formatPackageStub($package, "routes.php"), $stub);
+	}
+
+
+	public function writeControllerFile(Package $package, $directory, $plain){
+		$stub = $this->files->get(__DIR__.'/stubs/controller.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->put($directory.'/src/controllers/'.$this->formatPackageStub($package, "{{name}}Controller.php"), $stub);
+	}
+
+	public function writeViewFile(Package $package, $directory, $plain){
+		$stub = $this->files->get(__DIR__.'/stubs/view.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{name}}.blade.php"), $stub);
+	}
+	
 
 	/**
 	 * Create the support directories for a package.
