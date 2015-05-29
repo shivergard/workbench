@@ -2,7 +2,9 @@
 My Version of WorkBench . Extended features.
 
 => Creates default readme.md
+
 => Makes default Console command for project
+
 => displays at the end provider path for config/app.php
 
 composer.json
@@ -22,6 +24,7 @@ composer.json
 	
 
 In config/app.php
+
   	'providers' => [
   	  ...
   		'Illuminate\Workbench\WorkbenchServiceProvider',
