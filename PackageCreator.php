@@ -244,7 +244,7 @@ class PackageCreator {
 	public function writeViewFile(Package $package, $directory, $plain){
 		$stub = $this->files->get(__DIR__.'/stubs/view.stub');
 		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{name}}.blade.php"), $stub);
+		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
 	}
 	
 
