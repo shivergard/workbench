@@ -20,6 +20,7 @@ class {{name}}ServiceProvider extends ServiceProvider {
 	{
 		require __DIR__ .'/routes.php';
 		$this->loadViewsFrom(__DIR__.'/../../views', '{{lower_name}}');
+		$this->commands('{{vendor}}\{{name}}\Console\{{name}}Console');
 	}
 
 	/**
