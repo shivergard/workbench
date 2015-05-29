@@ -35,7 +35,8 @@ class PackageCreator {
 		'ServiceProvider',
 		'RoutesFile',
 		'ControllerFile',
-		'ViewFile'
+		'ViewFile',
+		'ConfigFile'
 	);
 
 	/**
@@ -247,6 +248,13 @@ class PackageCreator {
 		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
 	}
 	
+
+	public function writeConfigFile(Package $package, $directory, $plain){
+		$stub = $this->files->get(__DIR__.'/stubs/config.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$path = $this->createClassDirectory($package, $directory);
+		$this->files->put($path.'/'.$this->formatPackageStub($package, "{{lower_name}}.php" ), $stub);		
+	}
 
 	/**
 	 * Create the support directories for a package.
