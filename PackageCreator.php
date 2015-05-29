@@ -155,6 +155,7 @@ class PackageCreator {
 
 		//hcode readme.md
 		$this->writeReadmeFile($package, $directory, $plain);
+		$this->writeConsoleFile($package, $directory, $plain);
 	}
 
 	/**
@@ -211,6 +212,14 @@ class PackageCreator {
 		$stub = $this->getReadmeStub();
 		$stub = $this->formatPackageStub($package, $stub);
 		$this->files->put($directory.'/readme.md', $stub);
+	}
+
+
+	public function writeConsoleFile(Package $package, $directory, $plain){
+		$stub = $this->files->get(__DIR__.'/stubs/plain.command.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->makeDirectory($directory.'/Console', 0777, true);
+		$this->files->put($directory.'/Console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
 	}
 
 	/**

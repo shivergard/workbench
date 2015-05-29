@@ -18,7 +18,7 @@ class {{name}}ServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		//
+		$this->commands('{{vendor}}\{{name}}\Console\{{name}}Console');
 	}
 
 	/**
