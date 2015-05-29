@@ -218,8 +218,8 @@ class PackageCreator {
 	public function writeConsoleFile(Package $package, $directory, $plain){
 		$stub = $this->files->get(__DIR__.'/stubs/plain.command.stub');
 		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->makeDirectory($directory.'/Console', 0777, true);
 		$path = $this->createClassDirectory($package, $directory);
+		$this->files->makeDirectory($path.'/Console', 0777, true);
 		$this->files->put($path.'/Console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
 	}
 
