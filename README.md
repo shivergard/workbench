@@ -29,3 +29,6 @@ In config/app.php
   	  ...
   		'Illuminate\Workbench\WorkbenchServiceProvider',
   	];
+
+
+Used in [[ https://bitbucket.org/basicblades/laravel-package-development-blade ]]
