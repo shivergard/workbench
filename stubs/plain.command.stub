@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Eloquent\Model;
 use \Schema;
 use \Config;
 use \DB;
@@ -48,7 +49,7 @@ class {{name}}Console extends Command {
 	{
 		$this->info('¯\(°_o)/¯');
 		if (class_exists('App\Model\Akwilon\Roles')){
-			$this->createRole("App\Model\Akwilon\Roles";
+			$this->createRole("App\Model\Akwilon\Roles");
 		}else if (class_exists('App\User\Roles')){
 			$this->createRole("App\User\Roles");
 		}
