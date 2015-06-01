@@ -1,4 +1,4 @@
-@extends((\Config::get('extend_view') ? \Config::get('extend_view') : '{{lower_name}}::app'))
+@extends((\Config::get('{{lower_name}}.extend_view') ? \Config::get('{{lower_name}}.extend_view') : '{{lower_name}}::app'))
 
 @section('content')
 <div class="container-fluid">
