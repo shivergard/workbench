@@ -11,7 +11,7 @@ and add requirements
 
 	"require": {
 		...
-        "{{lower_vendor}}/{{lower_name}}" : "dev-master" ,
+        "{{lower_vendor}}/{{lower_name}}" : "dev-master" 
     },
 
 and add service provider
