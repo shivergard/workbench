@@ -18,10 +18,10 @@ class PackageCreator {
 	 */
 	protected $basicBlocks = array(
 		'SupportFiles',
-		'ConsoleFile',
-		'ReadmeFile',
 		'TestDirectory',
 		'ServiceProvider',
+		'ConsoleFile',
+		'ReadmeFile',
 	);
 
 	/**
@@ -31,8 +31,6 @@ class PackageCreator {
 	 */
 	protected $blocks = array(
 		'SupportFiles',
-		'ConsoleFile',
-		'ReadmeFile',
 		'SupportDirectories',
 		'PublicDirectory',
 		'TestDirectory',
@@ -40,7 +38,9 @@ class PackageCreator {
 		'RoutesFile',
 		'ControllerFile',
 		'ViewFile',
-		'ConfigFile'
+		'ConfigFile',
+		'ConsoleFile',
+		'ReadmeFile',
 	);
 
 	/**
