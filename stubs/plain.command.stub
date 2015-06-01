@@ -48,6 +48,7 @@ class {{name}}Console extends Command {
 	public function fire()
 	{
 		$this->info('¯\(°_o)/¯');
+		Model::unguard();
 		if (class_exists('App\Model\Akwilon\Roles')){
 			$this->createRole("App\Model\Akwilon\Roles");
 		}else if (class_exists('App\User\Roles')){
@@ -61,9 +62,11 @@ class {{name}}Console extends Command {
 	            "name"  => "{{lower_name}}"
 	        );
 
-	        if (isset($this->role_id))
+	        if (isset($this->role_id)){
+	        	$user["username"] = "{{lower_name}}";
+	        	$user["confirmation_code"] = "{{lower_name}}";
 	        	$user["role_id"] = $this->role_id;
-
+	        }
 			\App\User::create($user);
 			$this->info(' Mail: root@{{name}}.dev');
 			$this->info(' Passowrd: {{lower_name}}');
@@ -73,6 +76,7 @@ class {{name}}Console extends Command {
 	}
 
 	private function createRole($roleModel){
+
 		$role = $roleModel::create(
 			array(
 				'name' => '{{lower_name}}',

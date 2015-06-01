@@ -15,9 +15,9 @@ abstract class PackageController extends BaseController {
 	public function __construct()
 	{
 		if (class_exists('App\Model\Akwilon\Roles')){
-			$this->validateRole(App\Model\Akwilon\Roles::where('name' ,'{{lower_name}}'));
+			$this->validateRole(\App\Model\Akwilon\Roles::where('name' ,'{{lower_name}}'));
 		}else if (class_exists('App\User\Roles')){
-			$this->validateRole(App\User\Roles::where('name' ,'{{lower_name}}'));
+			$this->validateRole(\App\User\Roles::where('name' ,'{{lower_name}}'));
 		} else if (!is_object(Auth::user()) || !Auth::user()->name == '{{lower_name}}'){
 			Redirect::to('/')->send();
 		}
