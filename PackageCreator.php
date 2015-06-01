@@ -252,6 +252,12 @@ class PackageCreator {
 		$stub = $this->formatPackageStub($package, $stub);
 		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
 	}
+
+	public function writeModelFile(){
+		$stub = $this->files->get(__DIR__.'/stubs/base_model.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->put($directory.'/src/models/BaseModel.php', $stub);		
+	}
 	
 
 	public function writeConfigFile(Package $package, $directory, $plain){
@@ -270,7 +276,7 @@ class PackageCreator {
 	 */
 	public function writeSupportDirectories(Package $package, $directory)
 	{
-		foreach (array('config', 'controllers', 'lang', 'migrations', 'views' , 'console') as $support)
+		foreach (array('config', 'controllers', 'lang', 'migrations', 'views' , 'console' , 'models') as $support)
 		{
 			$this->writeSupportDirectory($package, $support, $directory);
 		}

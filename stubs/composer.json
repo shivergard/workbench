@@ -16,7 +16,8 @@
             "src/migrations",
             "src/controllers",
             "src/views",
-            "src/console"
+            "src/console",
+            "src/models"
         ],
         "psr-0": {
             "{{vendor}}\\{{name}}\\": "src/"
