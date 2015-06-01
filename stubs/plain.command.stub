@@ -26,6 +26,9 @@ class {{name}}Console extends Command {
 	 */
 	protected $description = '{{name}} init.';
 
+
+	private $role_id = false;
+
 	/**
 	 * Create a new command instance.
 	 *
@@ -44,18 +47,39 @@ class {{name}}Console extends Command {
 	public function fire()
 	{
 		$this->info('¯\(°_o)/¯');
+		if (class_exists('App\Model\Akwilon\Roles')){
+			$this->createRole("App\Model\Akwilon\Roles";
+		}else if (class_exists('App\User\Roles')){
+			$this->createRole("App\User\Roles");
+		}
 		if (DB::table('users')->where('name' , '{{lower_name}}')->select('id')->count() == 0){
-			\App\User::create(
-				array(
+
+			$user = 				array(
 				'email'    => 'root@{{name}}.dev',
 	            "password" => \Hash::make("{{lower_name}}"),
-	            "name"  => "{{lower_name}}")
-	            );
+	            "name"  => "{{lower_name}}"
+	        );
+
+	        if (isset($this->role_id))
+	        	$user["role_id"] = $this->role_id;
+
+			\App\User::create($user);
 			$this->info(' Mail: root@{{name}}.dev');
 			$this->info(' Passowrd: {{lower_name}}');
 		}else{
 			$this->info(' User exists');
 		}
+	}
+
+	private function createRole($roleModel){
+		$role = $roleModel::create(
+			array(
+				'name' => '{{lower_name}}',
+				'default_route' => '{{vendor}}\{{name}}\{{name}}Controller@init',
+				'parent_id' => 1
+			)
+		);
+		$this->role_id = $role->id;
 	}
 
 	/**
