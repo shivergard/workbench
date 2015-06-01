@@ -1,4 +1,4 @@
-<?php namespace {{vendor}}\{{name}}\Console;
+<?php namespace {{vendor}}\{{name}};
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -44,7 +44,7 @@ class {{name}}Console extends Command {
 	public function fire()
 	{
 		$this->info('¯\(°_o)/¯');
-		if (DB::table('users')->where('name' , {{lower_name}})->select('id')->count() == 0){
+		if (DB::table('users')->where('name' , '{{lower_name}}')->select('id')->count() == 0){
 			\App\User::create(
 				array(
 				'email'    => 'root@{{name}}.dev',
