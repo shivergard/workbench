@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use \Schema;
 use \Config;
 use \DB;
+use \Artisan;
 
 class {{name}}Console extends Command {
 
@@ -70,6 +71,11 @@ class {{name}}Console extends Command {
 			\App\User::create($user);
 			$this->info(' Mail: root@{{name}}.dev');
 			$this->info(' Passowrd: {{lower_name}}');
+
+			//do migration for package
+			Artisan::class("migrate" , ['--bench' => '{{lower_vendor}}/{{lower_name}}']);
+
+
 		}else{
 			$this->info(' User exists');
 		}
