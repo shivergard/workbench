@@ -80,7 +80,7 @@ class {{name}}Console extends Command {
 		$role = $roleModel::create(
 			array(
 				'name' => '{{lower_name}}',
-				'default_route' => '{{vendor}}\{{name}}\{{name}}Controller@init',
+				'default_route' => '\{{vendor}}\{{name}}\{{name}}Controller@init',
 				'parent_id' => 1
 			)
 		);
