@@ -231,8 +231,7 @@ class PackageCreator {
 	public function writeRoutesFile(Package $package, $directory, $plain){
 		$stub = $this->files->get(__DIR__.'/stubs/routes.stub');
 		$stub = $this->formatPackageStub($package, $stub);
-		$path = $this->createClassDirectory($package, $directory);
-		$this->files->put($path.'/'.$this->formatPackageStub($package, "routes.php"), $stub);
+		$this->files->put($directory.'/src/'.$this->formatPackageStub($package, "routes.php"), $stub);
 	}
 
 
