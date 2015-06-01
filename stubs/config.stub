@@ -2,6 +2,7 @@
 
 return [
 
-	'debug' => false
+	'debug' => false,
+	'extend_view' => false
 
 ];

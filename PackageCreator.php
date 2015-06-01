@@ -251,6 +251,14 @@ class PackageCreator {
 		$stub = $this->files->get(__DIR__.'/stubs/view.stub');
 		$stub = $this->formatPackageStub($package, $stub);
 		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
+
+		//put css view
+		$this->files->put($directory.'/src/views/css.blade.php', $this->files->get(__DIR__.'/stubs/css_view.stub'));
+
+		//put app view
+		$appStub = $this->files->get(__DIR__.'/stubs/app_view.stub');
+		$appStub = $this->formatPackageStub($package, $appStub);
+		$this->files->put($directory.'/src/views/app.blade.php', $appStub);
 	}
 
 	public function writeModelFile(){
