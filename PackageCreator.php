@@ -18,6 +18,8 @@ class PackageCreator {
 	 */
 	protected $basicBlocks = array(
 		'SupportFiles',
+		'ConsoleFile',
+		'ReadmeFile',
 		'TestDirectory',
 		'ServiceProvider',
 	);
@@ -29,6 +31,8 @@ class PackageCreator {
 	 */
 	protected $blocks = array(
 		'SupportFiles',
+		'ConsoleFile',
+		'ReadmeFile',
 		'SupportDirectories',
 		'PublicDirectory',
 		'TestDirectory',
@@ -157,9 +161,6 @@ class PackageCreator {
 
 		$this->files->put($directory.'/composer.json', $stub);
 
-		//hcode readme.md
-		$this->writeReadmeFile($package, $directory, $plain);
-		$this->writeConsoleFile($package, $directory, $plain);
 	}
 
 	/**
