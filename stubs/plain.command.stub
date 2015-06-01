@@ -63,7 +63,7 @@ class {{name}}Console extends Command {
 	            "name"  => "{{lower_name}}"
 	        );
 
-	        if (isset($this->role_id)){
+	        if (isset($this->role_id) && $this->role_id){
 	        	$user["username"] = "{{lower_name}}";
 	        	$user["confirmation_code"] = "{{lower_name}}";
 	        	$user["role_id"] = $this->role_id;
@@ -73,7 +73,7 @@ class {{name}}Console extends Command {
 			$this->info(' Passowrd: {{lower_name}}');
 
 			//do migration for package
-			Artisan::class("migrate" , ['--bench' => '{{lower_vendor}}/{{lower_name}}']);
+			//Artisan::call("migrate" , ['--bench' => '{{lower_vendor}}/{{lower_name}}']);
 
 
 		}else{
