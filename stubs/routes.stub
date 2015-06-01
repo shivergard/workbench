@@ -13,7 +13,7 @@ use \Redirect;
 |
 */
 
-Route::get('/{{lower_name}}/init' , '{{vendor}}\{{name}}\{{name}}Controller@init');
+Route::get('/{{lower_name}}/init' , '\{{vendor}}\{{name}}\{{name}}Controller@init');
 
 Route::get('/{{lower_name}}/{method}', function($method)
 {
