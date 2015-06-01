@@ -15,7 +15,8 @@
         "classmap": [
             "src/migrations",
             "src/controllers",
-            "src/views"
+            "src/views",
+            "src/console"
         ],
         "psr-0": {
             "{{vendor}}\\{{name}}\\": "src/"

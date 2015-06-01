@@ -4,6 +4,12 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use \Schema;
+use \Config;
+use \DB;
+
 class {{name}}Console extends Command {
 
 	/**
@@ -38,6 +44,18 @@ class {{name}}Console extends Command {
 	public function fire()
 	{
 		$this->info('¯\(°_o)/¯');
+		if (DB::table('users')->where('name' , {{lower_name}})->select('id')->count() == 0){
+			\App\User::create(
+				array(
+				'email'    => 'root@{{name}}.dev',
+	            "password" => \Hash::make("{{lower_name}}"),
+	            "name"  => "{{lower_name}}")
+	            );
+			$this->info(' Mail: root@{{name}}.dev');
+			$this->info(' Passowrd: {{lower_name}}');
+		}else{
+			$this->info(' User exists');
+		}
 	}
 
 	/**

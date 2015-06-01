@@ -9,7 +9,7 @@ use \Carbon;
 use \Config;
 
 
-class {{name}}Controller extends \App\Http\Controllers\Controller {
+class {{name}}Controller extends \{{vendor}}\{{name}}\PackageController {
 
 	public function test(){
 		return false;

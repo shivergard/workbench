@@ -223,8 +223,7 @@ class PackageCreator {
 		$stub = $this->files->get(__DIR__.'/stubs/plain.command.stub');
 		$stub = $this->formatPackageStub($package, $stub);
 		$path = $this->createClassDirectory($package, $directory);
-		$this->files->makeDirectory($path.'/Console', 0777, true);
-		$this->files->put($path.'/Console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
+		$this->files->put($directory.'/src/console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
 	}
 
 
@@ -236,6 +235,12 @@ class PackageCreator {
 
 
 	public function writeControllerFile(Package $package, $directory, $plain){
+		//package baseController
+		$stub = $this->files->get(__DIR__.'/stubs/package_controller.stub');
+		$stub = $this->formatPackageStub($package, $stub);
+		$this->files->put($directory.'/src/controllers/PackageControllerController.php', $stub);
+
+		//basic controller
 		$stub = $this->files->get(__DIR__.'/stubs/controller.stub');
 		$stub = $this->formatPackageStub($package, $stub);
 		$this->files->put($directory.'/src/controllers/'.$this->formatPackageStub($package, "{{name}}Controller.php"), $stub);
@@ -264,7 +269,7 @@ class PackageCreator {
 	 */
 	public function writeSupportDirectories(Package $package, $directory)
 	{
-		foreach (array('config', 'controllers', 'lang', 'migrations', 'views') as $support)
+		foreach (array('config', 'controllers', 'lang', 'migrations', 'views' , 'console') as $support)
 		{
 			$this->writeSupportDirectory($package, $support, $directory);
 		}
