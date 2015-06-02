@@ -20,6 +20,11 @@ class WorkbenchServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
+
+		$this->publishes([
+		    __DIR__.'/workbench.php' => config_path('workbench.php'),
+		]);
+
 		$this->app->singleton('package.creator', function($app)
 		{
 			return new PackageCreator($app['files']);
