@@ -22,6 +22,7 @@ class PackageCreator {
 		'ServiceProvider',
 		'ConsoleFile',
 		'ReadmeFile',
+		'ArtisanFile'
 	);
 
 	/**
@@ -41,6 +42,7 @@ class PackageCreator {
 		'ConfigFile',
 		'ConsoleFile',
 		'ReadmeFile',
+		'ArtisanFile'
 	);
 
 	/**
@@ -187,6 +189,12 @@ class PackageCreator {
 	public function writeIgnoreFile(Package $package, $directory, $plain)
 	{
 		$this->files->copy(__DIR__.'/stubs/gitignore.txt', $directory.'/.gitignore');
+	}
+
+
+	public function writeArtisanFile(Package $package, $directory, $plain)
+	{
+		$this->files->copy(__DIR__.'/stubs/artisan.stub', $directory.'/artisan');
 	}
 
 
