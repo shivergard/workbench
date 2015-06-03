@@ -1,0 +1,19 @@
+#/bin/sh
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+if [ -f $DIR/../../../storage/database.sqlite ];
+then
+	read -r -p " ¯\(°_o)/¯ Are you sure? (rm rm storage/database.sqlite ) [y/N] " response
+	case $response in
+	    [yY][eE][sS]|[yY]) 
+	        rm $DIR/../../../storage/database.sqlite
+			echo "DB DROPED ¯\(°_o)/¯"
+	        ;;
+	    *)
+	        echo "¯\(°_o)/¯"
+	        exit
+	        ;;
+	esac
+fi
+
+touch $DIR/../../../storage/database.sqlite
+chmod -fR 777 $DIR/../../../storage/database.sqlite

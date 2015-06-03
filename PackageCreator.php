@@ -43,7 +43,8 @@ class PackageCreator {
 		'ConsoleFile',
 		'ReadmeFile',
 		'ArtisanFile',
-		'MigrationFile'
+		'MigrationFile',
+		'DbFile'
 	);
 
 	/**
@@ -202,6 +203,9 @@ class PackageCreator {
 		$this->files->copy(__DIR__.'/stubs/mm.stub', $directory.'/mm.sh');
 	}
 
+	public function writeDbFile(Package $package, $directory, $plain){
+		$this->files->copy(__DIR__.'/stubs/db.stub', $directory.'/db.sh');
+	}	
 
 
 	/**
