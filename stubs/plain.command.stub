@@ -12,6 +12,8 @@ use \Config;
 use \DB;
 use \Artisan;
 
+use Illuminate\Container\Container;
+
 class {{name}}Console extends Command {
 
 	/**
@@ -36,8 +38,9 @@ class {{name}}Console extends Command {
 	 *
 	 * @return void
 	 */
-	public function __construct()
+	public function __construct(Container $app)
 	{
+		$this->app = $app;
 		parent::__construct();
 	}
 
@@ -72,9 +75,12 @@ class {{name}}Console extends Command {
 			$this->info(' Mail: root@{{name}}.dev');
 			$this->info(' Passowrd: {{lower_name}}');
 
-			//do migration for package
-			//Artisan::call("migrate" , ['--bench' => '{{lower_vendor}}/{{lower_name}}']);
-
+			//create migrations
+			$migrations = $this->app->make('migration.repository');
+        	$migrations->createRepository();
+        
+        	$migrator = $this->app->make('migrator');
+        	$migrator->run(__DIR__.'/../src/migrations');
 
 		}else{
 			$this->info(' User exists');
