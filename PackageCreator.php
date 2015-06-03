@@ -42,7 +42,8 @@ class PackageCreator {
 		'ConfigFile',
 		'ConsoleFile',
 		'ReadmeFile',
-		'ArtisanFile'
+		'ArtisanFile',
+		'MigrationFile'
 	);
 
 	/**
@@ -195,6 +196,10 @@ class PackageCreator {
 	public function writeArtisanFile(Package $package, $directory, $plain)
 	{
 		$this->files->copy(__DIR__.'/stubs/artisan.stub', $directory.'/artisan');
+	}
+
+	public function writeMigrationFile(Package $package, $directory, $plain){
+		$this->files->copy(__DIR__.'/stubs/mm.stub', $directory.'/mm.sh');
 	}
 
 

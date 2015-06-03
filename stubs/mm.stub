@@ -1,0 +1,9 @@
+#!/bin/bash
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+#alias => Make Migration
+response=$(php artisan make:migration $1 || tr ";" "\n")
+for x in $response
+do
+	echo "."
+done
+cp $DIR/../../../database/migrations/$x.php $DIR/src/migrations/
