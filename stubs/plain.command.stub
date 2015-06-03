@@ -75,13 +75,6 @@ class {{name}}Console extends Command {
 			$this->info(' Mail: root@{{name}}.dev');
 			$this->info(' Passowrd: {{lower_name}}');
 
-			//create migrations
-			$migrations = $this->app->make('migration.repository');
-        	$migrations->createRepository();
-        
-        	$migrator = $this->app->make('migrator');
-        	$migrator->run(__DIR__.'/../src/migrations');
-
 		}else{
 			$this->info(' User exists');
 		}
