@@ -11,23 +11,27 @@ use Illuminate\Support\Facades\Route;
 | and give it the controller to call when that URI is requested.
 |
 */
+if (\Config::get('{{lower_name}}.path'))
+    $packagePath = \Config::get('{{lower_name}}.path');
+else
+    $packagePath = '/{{lower_name}}';
 
-Route::get('/{{lower_name}}/init' , '{{vendor}}\{{name}}\{{name}}Controller@init');
+Route::get($packagePath.'/init' , '{{vendor}}\{{name}}\{{name}}Controller@init');
 
-Route::get('/{{lower_name}}/{method}', function($method)
+Route::get($packagePath.'/{method}', function($method)
 {
     $controller = new {{vendor}}\{{name}}\{{name}}Controller;
     if (method_exists ( $controller , $method ))
-    	return $controller->{$method}();
+        return $controller->{$method}();
     else
-    	return \Redirect::to('/');
+        return \Redirect::to('/');
 });
 
-Route::get('/{{lower_name}}/{method}/{param}', function($method , $param)
+Route::get($packagePath.'/{method}/{param}', function($method , $param)
 {
     $controller = new {{vendor}}\{{name}}\{{name}}Controller;
     if (method_exists ( $controller , $method ))
-    	return $controller->{$method}($param);
+        return $controller->{$method}($param);
     else
-    	return \Redirect::to('/');
+        return \Redirect::to('/');
 });
