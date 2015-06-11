@@ -4,6 +4,7 @@ return [
 
     'debug' => false,
     'extend_view' => false,
-    'path' => false
+    'path' => false,
+    'ident' => false
 
 ];

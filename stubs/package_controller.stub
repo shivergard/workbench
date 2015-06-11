@@ -6,27 +6,33 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 
 use \Auth;
 use \Redirect;
+use \Config;
 
 
 abstract class PackageController extends BaseController {
 
-	use DispatchesCommands, ValidatesRequests;
+    use DispatchesCommands, ValidatesRequests;
 
-	public function __construct()
-	{
-		if (class_exists('App\Model\Akwilon\Roles')){
-			$this->validateRole(\App\Model\Akwilon\Roles::where('name' ,'{{lower_name}}'));
-		}else if (class_exists('App\User\Roles')){
-			$this->validateRole(\App\User\Roles::where('name' ,'{{lower_name}}'));
-		} else if (!is_object(Auth::user()) || !Auth::user()->name == '{{lower_name}}'){
-			Redirect::to('/')->send();
-		}
-	}
+    public function __construct()
+    {
+        if (\Config::get('{{lower_name}}.ident'))
+            $ident = \Config::get('{{lower_name}}.ident');
+        else
+            $ident = '{{lower_name}}';
 
-	public function validateRole($role){
-		if ($role->count() == 0 || !is_object(Auth::user()) || Auth::user()->role_id != $role->first()->id){
-			Redirect::to('/')->send();
-		}
-	}
+        if (class_exists('App\Model\Akwilon\Roles')){
+            $this->validateRole(\App\Model\Akwilon\Roles::where('name' , $ident));
+        }else if (class_exists('App\User\Roles')){
+            $this->validateRole(\App\User\Roles::where('name' , $ident));
+        } else if (!is_object(Auth::user()) || !Auth::user()->name == $ident){
+            Redirect::to('/')->send();
+        }
+    }
+
+    public function validateRole($role){
+        if ($role->count() == 0 || !is_object(Auth::user()) || Auth::user()->role_id != $role->first()->id){
+            Redirect::to('/')->send();
+        }
+    }
 
 }
