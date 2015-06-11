@@ -5,3 +5,4 @@ artisan
 .DS_Store
 mm.sh
 db.sh
+cup.sh
