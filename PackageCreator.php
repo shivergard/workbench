@@ -4,486 +4,491 @@ use Illuminate\Filesystem\Filesystem;
 
 class PackageCreator {
 
-	/**
-	 * The filesystem instance.
-	 *
-	 * @var \Illuminate\Filesystem\Filesystem
-	 */
-	protected $files;
-
-	/**
-	 * The basic building blocks of the package.
-	 *
-	 * @param  array
-	 */
-	protected $basicBlocks = array(
-		'SupportFiles',
-		'TestDirectory',
-		'ServiceProvider',
-		'ConsoleFile',
-		'ReadmeFile',
-		'ArtisanFile'
-	);
-
-	/**
-	 * The building blocks of the package.
-	 *
-	 * @param  array
-	 */
-	protected $blocks = array(
-		'SupportFiles',
-		'SupportDirectories',
-		'PublicDirectory',
-		'TestDirectory',
-		'ServiceProvider',
-		'RoutesFile',
-		'ControllerFile',
-		'ViewFile',
-		'ConfigFile',
-		'ConsoleFile',
-		'ReadmeFile',
-		'ArtisanFile',
-		'MigrationFile',
-		'DbFile'
-	);
-
-	/**
-	 * Create a new package creator instance.
-	 *
-	 * @param  \Illuminate\Filesystem\Filesystem  $files
-	 * @return void
-	 */
-	public function __construct(Filesystem $files)
-	{
-		$this->files = $files;
-	}
-
-	/**
-	 * Create a new package stub.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $path
-	 * @param  bool    $plain
-	 * @return string
-	 */
-	public function create(Package $package, $path, $plain = true)
-	{
-		$directory = $this->createDirectory($package, $path);
-
-		// To create the package, we will spin through a list of building blocks that
-		// make up each package. We'll then call the method to build that block on
-		// the class, which keeps the actual building of stuff nice and cleaned.
-		foreach ($this->getBlocks($plain) as $block)
-		{
-			$this->{"write{$block}"}($package, $directory, $plain);
-		}
-
-		return $directory;
-	}
-
-	/**
-	 * Create a package with all resource directories.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $path
-	 * @return void
-	 */
-	public function createWithResources(Package $package, $path)
-	{
-		return $this->create($package, $path, false);
-	}
-
-	/**
-	 * Get the blocks for a given package.
-	 *
-	 * @param  bool $plain
-	 * @return array
-	 */
-	protected function getBlocks($plain)
-	{
-		return $plain ? $this->basicBlocks : $this->blocks;
-	}
-
-	/**
-	 * Write the support files to the package root.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	public function writeSupportFiles(Package $package, $directory, $plain)
-	{
-		foreach (array('PhpUnit', 'Travis', 'Composer', 'Ignore') as $file)
-		{
-			$this->{"write{$file}File"}($package, $directory, $plain);
-		}
-	}
-
-	/**
-	 * Write the PHPUnit stub file.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @return void
-	 */
-	protected function writePhpUnitFile(Package $package, $directory)
-	{
-		$stub = __DIR__.'/stubs/phpunit.xml';
-
-		$this->files->copy($stub, $directory.'/phpunit.xml');
-	}
-
-	/**
-	 * Write the Travis stub file.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @return void
-	 */
-	protected function writeTravisFile(Package $package, $directory)
-	{
-		$stub = __DIR__.'/stubs/.travis.yml';
-
-		$this->files->copy($stub, $directory.'/.travis.yml');
-	}
-
-	/**
-	 * Write the Composer.json stub file.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	protected function writeComposerFile(Package $package, $directory, $plain)
-	{
-
-		$stub = $this->getComposerStub($plain);
-
-		$stub = $this->formatPackageStub($package, $stub);
-
-		$this->files->put($directory.'/composer.json', $stub);
-
-	}
-
-	/**
-	 * Get the Composer.json stub file contents.
-	 *
-	 * @param  bool  $plain
-	 * @return string
-	 */
-	protected function getComposerStub($plain)
-	{
-		if ($plain) return $this->files->get(__DIR__.'/stubs/plain.composer.json');
-
-		return $this->files->get(__DIR__.'/stubs/composer.json');
-	}
-
-	/**
-	 * Write the stub .gitignore file for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	public function writeIgnoreFile(Package $package, $directory, $plain)
-	{
-		$this->files->copy(__DIR__.'/stubs/gitignore.txt', $directory.'/.gitignore');
-	}
-
-
-	public function writeArtisanFile(Package $package, $directory, $plain)
-	{
-		$this->files->copy(__DIR__.'/stubs/artisan.stub', $directory.'/artisan');
-	}
-
-	public function writeMigrationFile(Package $package, $directory, $plain){
-		$this->files->copy(__DIR__.'/stubs/mm.stub', $directory.'/mm.sh');
-	}
-
-	public function writeDbFile(Package $package, $directory, $plain){
-		$this->files->copy(__DIR__.'/stubs/db.stub', $directory.'/db.sh');
-	}	
-
-
-	/**
-	 * Get the readme.md stub file contents.
-	 *
-	 * @param  bool  $plain
-	 * @return string
-	 */
-	protected function getReadmeStub()
-	{
-
-		return $this->files->get(__DIR__.'/stubs/readme.md');
-	}
-
-
-	/**
-	 * Write the stub readme.md file for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	public function writeReadmeFile(Package $package, $directory, $plain)
-	{
-		$stub = $this->getReadmeStub();
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/readme.md', $stub);
-	}
-
-
-	public function writeConsoleFile(Package $package, $directory, $plain){
-		$stub = $this->files->get(__DIR__.'/stubs/plain.command.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$path = $this->createClassDirectory($package, $directory);
-		$this->files->put($directory.'/src/console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
-	}
-
-
-	public function writeRoutesFile(Package $package, $directory, $plain){
-		$stub = $this->files->get(__DIR__.'/stubs/routes.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/'.$this->formatPackageStub($package, "routes.php"), $stub);
-	}
-
-
-	public function writeControllerFile(Package $package, $directory, $plain){
-		//package baseController
-		$stub = $this->files->get(__DIR__.'/stubs/package_controller.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/controllers/PackageControllerController.php', $stub);
-
-		//basic controller
-		$stub = $this->files->get(__DIR__.'/stubs/controller.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/controllers/'.$this->formatPackageStub($package, "{{name}}Controller.php"), $stub);
-	}
-
-	public function writeViewFile(Package $package, $directory, $plain){
-		$stub = $this->files->get(__DIR__.'/stubs/view.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
-
-		//put css view
-		$this->files->put($directory.'/src/views/css.blade.php', $this->files->get(__DIR__.'/stubs/css_view.stub'));
-
-		//put app view
-		$appStub = $this->files->get(__DIR__.'/stubs/app_view.stub');
-		$appStub = $this->formatPackageStub($package, $appStub);
-		$this->files->put($directory.'/src/views/app.blade.php', $appStub);
-	}
-
-	public function writeModelFile(){
-		$stub = $this->files->get(__DIR__.'/stubs/base_model.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$this->files->put($directory.'/src/models/BaseModel.php', $stub);		
-	}
-	
-
-	public function writeConfigFile(Package $package, $directory, $plain){
-		$stub = $this->files->get(__DIR__.'/stubs/config.stub');
-		$stub = $this->formatPackageStub($package, $stub);
-		$path = $this->createClassDirectory($package, $directory);
-		$this->files->put($path.'/'.$this->formatPackageStub($package, "{{lower_name}}.php" ), $stub);		
-	}
-
-	/**
-	 * Create the support directories for a package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @return void
-	 */
-	public function writeSupportDirectories(Package $package, $directory)
-	{
-		foreach (array('config', 'controllers', 'lang', 'migrations', 'views' , 'console' , 'models') as $support)
-		{
-			$this->writeSupportDirectory($package, $support, $directory);
-		}
-	}
-
-	/**
-	 * Write a specific support directory for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $support
-	 * @param  string  $directory
-	 * @return void
-	 */
-	protected function writeSupportDirectory(Package $package, $support, $directory)
-	{
-		// Once we create the source directory, we will write an empty file to the
-		// directory so that it will be kept in source control allowing the dev
-		// to go ahead and push these components to GitHub right on creation.
-		$path = $directory.'/src/'.$support;
-
-		$this->files->makeDirectory($path, 0777, true);
-
-		$this->files->put($path.'/.gitkeep', '');
-	}
-
-	/**
-	 * Create the public directory for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	public function writePublicDirectory(Package $package, $directory, $plain)
-	{
-		if ($plain) return;
-
-		$this->files->makeDirectory($directory.'/public');
-
-		$this->files->put($directory.'/public/.gitkeep', '');
-	}
-
-	/**
-	 * Create the test directory for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @return void
-	 */
-	public function writeTestDirectory(Package $package, $directory)
-	{
-		$this->files->makeDirectory($directory.'/tests');
-
-		$this->files->put($directory.'/tests/.gitkeep', '');
-	}
-
-	/**
-	 * Write the stub ServiceProvider for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  bool    $plain
-	 * @return void
-	 */
-	public function writeServiceProvider(Package $package, $directory, $plain)
-	{
-		// Once we have the service provider stub, we will need to format it and make
-		// the necessary replacements to the class, namespaces, etc. Then we'll be
-		// able to write it out into the package's workbench directory for them.
-		$stub = $this->getProviderStub($package, $plain);
-
-		$this->writeProviderStub($package, $directory, $stub);
-	}
-
-	/**
-	 * Write the service provider stub for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @param  string  $stub
-	 * @return void
-	 */
-	protected function writeProviderStub(Package $package, $directory, $stub)
-	{
-		$path = $this->createClassDirectory($package, $directory);
-
-		// The primary source directory where the package's classes will live may not
-		// exist yet, so we will need to create it before we write these providers
-		// out to that location. We'll go ahead and create now here before then.
-		$file = $path.'/'.$package->name.'ServiceProvider.php';
-
-		$this->files->put($file, $stub);
-	}
-
-	/**
-	 * Get the stub for a ServiceProvider.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  bool  $plain
-	 * @return string
-	 */
-	protected function getProviderStub(Package $package, $plain)
-	{
-		return $this->formatPackageStub($package, $this->getProviderFile($plain));
-	}
-
-	/**
-	 * Load the raw service provider file.
-	 *
-	 * @param  bool  $plain
-	 * @return string
-	 */
-	protected function getProviderFile($plain)
-	{
-		if ($plain)
-		{
-			return $this->files->get(__DIR__.'/stubs/plain.provider.stub');
-		}
-
-		return $this->files->get(__DIR__.'/stubs/provider.stub');
-	}
-
-	/**
-	 * Create the main source directory for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $directory
-	 * @return string
-	 */
-	protected function createClassDirectory(Package $package, $directory)
-	{
-		$path = $directory.'/src/'.$package->vendor.'/'.$package->name;
-
-		if ( ! $this->files->isDirectory($path))
-		{
-			$this->files->makeDirectory($path, 0777, true);
-		}
-
-		return $path;
-	}
-
-	/**
-	 * Format a generic package stub file.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $stub
-	 * @return string
-	 */
-	protected function formatPackageStub(Package $package, $stub)
-	{
-		foreach (get_object_vars($package) as $key => $value)
-		{
-			$stub = str_replace('{{'.snake_case($key).'}}', $value, $stub);
-		}
-
-		return $stub;
-	}
-
-	/**
-	 * Create a workbench directory for the package.
-	 *
-	 * @param  \Illuminate\Workbench\Package  $package
-	 * @param  string  $path
-	 * @return string
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function createDirectory(Package $package, $path)
-	{
-		$fullPath = $path.'/'.$package->getFullName();
-
-		// If the directory doesn't exist, we will go ahead and create the package
-		// directory in the workbench location. We will use this entire package
-		// name when creating the directory to avoid any potential conflicts.
-		if ( ! $this->files->isDirectory($fullPath))
-		{
-			$this->files->makeDirectory($fullPath, 0777, true);
-
-			return $fullPath;
-		}
-
-		throw new \InvalidArgumentException("Package exists.");
-	}
+    /**
+     * The filesystem instance.
+     *
+     * @var \Illuminate\Filesystem\Filesystem
+     */
+    protected $files;
+
+    /**
+     * The basic building blocks of the package.
+     *
+     * @param  array
+     */
+    protected $basicBlocks = array(
+        'SupportFiles',
+        'TestDirectory',
+        'ServiceProvider',
+        'ConsoleFile',
+        'ReadmeFile',
+        'ArtisanFile'
+    );
+
+    /**
+     * The building blocks of the package.
+     *
+     * @param  array
+     */
+    protected $blocks = array(
+        'SupportFiles',
+        'SupportDirectories',
+        'PublicDirectory',
+        'TestDirectory',
+        'ServiceProvider',
+        'RoutesFile',
+        'ControllerFile',
+        'ViewFile',
+        'ConfigFile',
+        'ConsoleFile',
+        'ReadmeFile',
+        'ArtisanFile',
+        'MigrationFile',
+        'DbFile',
+        'CupFile'
+    );
+
+    /**
+     * Create a new package creator instance.
+     *
+     * @param  \Illuminate\Filesystem\Filesystem  $files
+     * @return void
+     */
+    public function __construct(Filesystem $files)
+    {
+        $this->files = $files;
+    }
+
+    /**
+     * Create a new package stub.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $path
+     * @param  bool    $plain
+     * @return string
+     */
+    public function create(Package $package, $path, $plain = true)
+    {
+        $directory = $this->createDirectory($package, $path);
+
+        // To create the package, we will spin through a list of building blocks that
+        // make up each package. We'll then call the method to build that block on
+        // the class, which keeps the actual building of stuff nice and cleaned.
+        foreach ($this->getBlocks($plain) as $block)
+        {
+            $this->{"write{$block}"}($package, $directory, $plain);
+        }
+
+        return $directory;
+    }
+
+    /**
+     * Create a package with all resource directories.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $path
+     * @return void
+     */
+    public function createWithResources(Package $package, $path)
+    {
+        return $this->create($package, $path, false);
+    }
+
+    /**
+     * Get the blocks for a given package.
+     *
+     * @param  bool $plain
+     * @return array
+     */
+    protected function getBlocks($plain)
+    {
+        return $plain ? $this->basicBlocks : $this->blocks;
+    }
+
+    /**
+     * Write the support files to the package root.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    public function writeSupportFiles(Package $package, $directory, $plain)
+    {
+        foreach (array('PhpUnit', 'Travis', 'Composer', 'Ignore') as $file)
+        {
+            $this->{"write{$file}File"}($package, $directory, $plain);
+        }
+    }
+
+    /**
+     * Write the PHPUnit stub file.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @return void
+     */
+    protected function writePhpUnitFile(Package $package, $directory)
+    {
+        $stub = __DIR__.'/stubs/phpunit.xml';
+
+        $this->files->copy($stub, $directory.'/phpunit.xml');
+    }
+
+    /**
+     * Write the Travis stub file.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @return void
+     */
+    protected function writeTravisFile(Package $package, $directory)
+    {
+        $stub = __DIR__.'/stubs/.travis.yml';
+
+        $this->files->copy($stub, $directory.'/.travis.yml');
+    }
+
+    /**
+     * Write the Composer.json stub file.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    protected function writeComposerFile(Package $package, $directory, $plain)
+    {
+
+        $stub = $this->getComposerStub($plain);
+
+        $stub = $this->formatPackageStub($package, $stub);
+
+        $this->files->put($directory.'/composer.json', $stub);
+
+    }
+
+    /**
+     * Get the Composer.json stub file contents.
+     *
+     * @param  bool  $plain
+     * @return string
+     */
+    protected function getComposerStub($plain)
+    {
+        if ($plain) return $this->files->get(__DIR__.'/stubs/plain.composer.json');
+
+        return $this->files->get(__DIR__.'/stubs/composer.json');
+    }
+
+    /**
+     * Write the stub .gitignore file for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    public function writeIgnoreFile(Package $package, $directory, $plain)
+    {
+        $this->files->copy(__DIR__.'/stubs/gitignore.txt', $directory.'/.gitignore');
+    }
+
+
+    public function writeArtisanFile(Package $package, $directory, $plain)
+    {
+        $this->files->copy(__DIR__.'/stubs/artisan.stub', $directory.'/artisan');
+    }
+
+    public function writeMigrationFile(Package $package, $directory, $plain){
+        $this->files->copy(__DIR__.'/stubs/mm.stub', $directory.'/mm.sh');
+    }
+
+    public function writeDbFile(Package $package, $directory, $plain){
+        $this->files->copy(__DIR__.'/stubs/db.stub', $directory.'/db.sh');
+    } 
+
+    public function writeCupFile(Package $package, $directory, $plain){
+        $this->files->copy(__DIR__.'/stubs/cup.stub', $directory.'/cup.sh');
+    }
+
+
+    /**
+     * Get the readme.md stub file contents.
+     *
+     * @param  bool  $plain
+     * @return string
+     */
+    protected function getReadmeStub()
+    {
+
+        return $this->files->get(__DIR__.'/stubs/readme.md');
+    }
+
+
+    /**
+     * Write the stub readme.md file for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    public function writeReadmeFile(Package $package, $directory, $plain)
+    {
+        $stub = $this->getReadmeStub();
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/readme.md', $stub);
+    }
+
+
+    public function writeConsoleFile(Package $package, $directory, $plain){
+        $stub = $this->files->get(__DIR__.'/stubs/plain.command.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $path = $this->createClassDirectory($package, $directory);
+        $this->files->put($directory.'/src/console/'.$this->formatPackageStub($package, "{{name}}Console.php"), $stub);
+    }
+
+
+    public function writeRoutesFile(Package $package, $directory, $plain){
+        $stub = $this->files->get(__DIR__.'/stubs/routes.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/src/'.$this->formatPackageStub($package, "routes.php"), $stub);
+    }
+
+
+    public function writeControllerFile(Package $package, $directory, $plain){
+        //package baseController
+        $stub = $this->files->get(__DIR__.'/stubs/package_controller.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/src/controllers/PackageControllerController.php', $stub);
+
+        //basic controller
+        $stub = $this->files->get(__DIR__.'/stubs/controller.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/src/controllers/'.$this->formatPackageStub($package, "{{name}}Controller.php"), $stub);
+    }
+
+    public function writeViewFile(Package $package, $directory, $plain){
+        $stub = $this->files->get(__DIR__.'/stubs/view.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/src/views/'.$this->formatPackageStub($package, "{{lower_name}}.blade.php"), $stub);
+
+        //put css view
+        $this->files->put($directory.'/src/views/css.blade.php', $this->files->get(__DIR__.'/stubs/css_view.stub'));
+
+        //put app view
+        $appStub = $this->files->get(__DIR__.'/stubs/app_view.stub');
+        $appStub = $this->formatPackageStub($package, $appStub);
+        $this->files->put($directory.'/src/views/app.blade.php', $appStub);
+    }
+
+    public function writeModelFile(){
+        $stub = $this->files->get(__DIR__.'/stubs/base_model.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $this->files->put($directory.'/src/models/BaseModel.php', $stub);       
+    }
+    
+
+    public function writeConfigFile(Package $package, $directory, $plain){
+        $stub = $this->files->get(__DIR__.'/stubs/config.stub');
+        $stub = $this->formatPackageStub($package, $stub);
+        $path = $this->createClassDirectory($package, $directory);
+        $this->files->put($path.'/'.$this->formatPackageStub($package, "{{lower_name}}.php" ), $stub);      
+    }
+
+    /**
+     * Create the support directories for a package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @return void
+     */
+    public function writeSupportDirectories(Package $package, $directory)
+    {
+        foreach (array('config', 'controllers', 'lang', 'migrations', 'views' , 'console' , 'models') as $support)
+        {
+            $this->writeSupportDirectory($package, $support, $directory);
+        }
+    }
+
+    /**
+     * Write a specific support directory for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $support
+     * @param  string  $directory
+     * @return void
+     */
+    protected function writeSupportDirectory(Package $package, $support, $directory)
+    {
+        // Once we create the source directory, we will write an empty file to the
+        // directory so that it will be kept in source control allowing the dev
+        // to go ahead and push these components to GitHub right on creation.
+        $path = $directory.'/src/'.$support;
+
+        $this->files->makeDirectory($path, 0777, true);
+
+        $this->files->put($path.'/.gitkeep', '');
+    }
+
+    /**
+     * Create the public directory for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    public function writePublicDirectory(Package $package, $directory, $plain)
+    {
+        if ($plain) return;
+
+        $this->files->makeDirectory($directory.'/public');
+
+        $this->files->put($directory.'/public/.gitkeep', '');
+    }
+
+    /**
+     * Create the test directory for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @return void
+     */
+    public function writeTestDirectory(Package $package, $directory)
+    {
+        $this->files->makeDirectory($directory.'/tests');
+
+        $this->files->put($directory.'/tests/.gitkeep', '');
+    }
+
+    /**
+     * Write the stub ServiceProvider for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  bool    $plain
+     * @return void
+     */
+    public function writeServiceProvider(Package $package, $directory, $plain)
+    {
+        // Once we have the service provider stub, we will need to format it and make
+        // the necessary replacements to the class, namespaces, etc. Then we'll be
+        // able to write it out into the package's workbench directory for them.
+        $stub = $this->getProviderStub($package, $plain);
+
+        $this->writeProviderStub($package, $directory, $stub);
+    }
+
+    /**
+     * Write the service provider stub for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @param  string  $stub
+     * @return void
+     */
+    protected function writeProviderStub(Package $package, $directory, $stub)
+    {
+        $path = $this->createClassDirectory($package, $directory);
+
+        // The primary source directory where the package's classes will live may not
+        // exist yet, so we will need to create it before we write these providers
+        // out to that location. We'll go ahead and create now here before then.
+        $file = $path.'/'.$package->name.'ServiceProvider.php';
+
+        $this->files->put($file, $stub);
+    }
+
+    /**
+     * Get the stub for a ServiceProvider.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  bool  $plain
+     * @return string
+     */
+    protected function getProviderStub(Package $package, $plain)
+    {
+        return $this->formatPackageStub($package, $this->getProviderFile($plain));
+    }
+
+    /**
+     * Load the raw service provider file.
+     *
+     * @param  bool  $plain
+     * @return string
+     */
+    protected function getProviderFile($plain)
+    {
+        if ($plain)
+        {
+            return $this->files->get(__DIR__.'/stubs/plain.provider.stub');
+        }
+
+        return $this->files->get(__DIR__.'/stubs/provider.stub');
+    }
+
+    /**
+     * Create the main source directory for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $directory
+     * @return string
+     */
+    protected function createClassDirectory(Package $package, $directory)
+    {
+        $path = $directory.'/src/'.$package->vendor.'/'.$package->name;
+
+        if ( ! $this->files->isDirectory($path))
+        {
+            $this->files->makeDirectory($path, 0777, true);
+        }
+
+        return $path;
+    }
+
+    /**
+     * Format a generic package stub file.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $stub
+     * @return string
+     */
+    protected function formatPackageStub(Package $package, $stub)
+    {
+        foreach (get_object_vars($package) as $key => $value)
+        {
+            $stub = str_replace('{{'.snake_case($key).'}}', $value, $stub);
+        }
+
+        return $stub;
+    }
+
+    /**
+     * Create a workbench directory for the package.
+     *
+     * @param  \Illuminate\Workbench\Package  $package
+     * @param  string  $path
+     * @return string
+     *
+     * @throws \InvalidArgumentException
+     */
+    protected function createDirectory(Package $package, $path)
+    {
+        $fullPath = $path.'/'.$package->getFullName();
+
+        // If the directory doesn't exist, we will go ahead and create the package
+        // directory in the workbench location. We will use this entire package
+        // name when creating the directory to avoid any potential conflicts.
+        if ( ! $this->files->isDirectory($fullPath))
+        {
+            $this->files->makeDirectory($fullPath, 0777, true);
+
+            return $fullPath;
+        }
+
+        throw new \InvalidArgumentException("Package exists.");
+    }
 
 }
